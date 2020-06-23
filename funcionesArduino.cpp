@@ -46,6 +46,7 @@ botondown = digitalRead(BOTONDOWN);
       break;
     case 2:
       digitalWrite(ledR, LOW);
+      digitalWrite(ledV, HIGH);
       i=0;
       break;
   }  
@@ -125,10 +126,13 @@ void loop()
  #define IR 3
  IRrecv receptor(IR);
  decode_results resultado;
+
+ //el define de los botones se hace como: BOTON1 0x(aca va lo que imprime)
  
  void setup()
  {
      receptor.enableIRIn();
+     Serial.begin(9600);
  }
 
  void loop()
@@ -142,7 +146,7 @@ void loop()
     switch(resultado.value)
     {
         case BOTON1:
-        tal cosa;
+        //tal cosa;
         break;
         .
         .
@@ -152,15 +156,18 @@ void loop()
 
 ////SENSORES///
 /**
- * Los sensores analogos son de luz o temperatura
- * para inicializarlos simplemente es determinar con una sentencia lo siguiente:
+ * Los sensores de luz, temperatura o gas son analogos. Los sensores de distancia, o de movimiento(PIR) son digitales.
+ * para inicializar un sensor analogo simplemente es determinar con una sentencia lo siguiente:
  * asignarle a una variable, la lectura del pin
  * Ejemplo:
  * float lecturaTempe;
  * lecturaTempe = analogRead(PINANALOGO);
  * //FIN EJEMPLO
  * Luego trabajo con esa variable 
- */
+ * En el caso de sensores digitales, hay q inicializar en setup(el de distancia usado en este caso no)
+ * Se inicializa como INPUT en la funcion setup()// pinMode(PINDIGITAL, INPUT) 
+ * luego en la funcion loop se utiliza digitalRead para leer al sensor
+ * /
 
 ///Funciones para los distintos sensores///
 
@@ -219,4 +226,44 @@ int SensorLuz()
   lecturaLuz = analogRead(SENSORLUZ);
  
   return lecturaLuz;
+}
+
+/** Esta funcion lee el pin del sensor, 
+ * mapea la lectura del gas
+ * Retorna la medida de gas en cuestion de cercania o lejania (mas cerca mas alto el valor)
+ */
+int SensorGas()
+{
+  gas = analogRead(PINGAS);
+  gas = map(gas,0,1023,0,255);
+  
+  return gas;
+}
+
+/** Esta funcion lee el pin del sensor, 
+ * determina si hay movimiento,
+ * de haberlo, enciende un led que recibe por parametro
+ */
+
+void SensorAccionPorMov(int led)
+{
+  hayMovimiento = digitalRead(PIR);
+    
+  if(hayMovimiento == HIGH)
+  {
+    digitalWrite(led, HIGH);
+    delay(500);
+  }
+  else
+  {
+    digitalWrite(led,LOW);
+    delay(500);
+  }
+}
+
+int SensorInclinacion()
+{
+  lecturaTilt = digitalRead(TILTPIN);
+ 
+  return lecturaTilt; //devuelve un estado de HIGH o LOW
 }
