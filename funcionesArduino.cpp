@@ -267,3 +267,62 @@ int SensorInclinacion()
  
   return lecturaTilt; //devuelve un estado de HIGH o LOW
 }
+
+
+
+//////////////////ALGUNAS FUNCIONES USANDO PUNTEROS A FUNCION /////////////////////////////////
+
+//El llamado a la funcion se hace asi: hacerTitilar(LED1,LED2,LED3,titilar);
+
+void titilar(int led, int tiempo)
+{
+  digitalWrite(led, HIGH);
+  delay(tiempo);
+  digitalWrite(led, LOW);
+  delay(tiempo);
+}
+
+void hacerTitilar(int led1, int led2, int led3,void (*pFuncion)(int,int))
+{
+  pFuncion(led1, 500);
+  pFuncion(led2, 500);
+  pFuncion(led3, 500);
+  
+}
+
+/////boton antirebote////
+
+int botonAntirebote()
+{ 
+  botondown = digitalRead(BOTONDOWN);
+  
+  if(botondown != ultimoEstadoBoton && botondown == HIGH)
+  {
+    i++;
+  }
+  ultimoEstadoBoton = botondown;
+  
+  return i;
+}
+
+void funcBoton(int(*pFunc)())
+{	
+  i = pFunc();
+  //Serial.println(i);
+  
+  switch(i)
+  {
+    case 1:
+      digitalWrite(LED1, HIGH);
+      digitalWrite(LED2, HIGH);
+      digitalWrite(LED3, HIGH);
+      break;
+    case 2:
+      digitalWrite(LED1, LOW);
+      digitalWrite(LED2, LOW);
+      digitalWrite(LED3, LOW);
+      i=0;
+    break;
+  }
+}
+
