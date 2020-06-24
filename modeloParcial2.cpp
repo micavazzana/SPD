@@ -48,8 +48,9 @@ void loop()
 {
   funcBoton(botonAntirebote);
   distancia = initSensorDist();
-  funcMotor(LEDV,regularMotor,distancia);  
   servo(distancia);
+  funcMotor(LEDV,regularMotor,distancia);  
+  
 }
 
 
@@ -104,8 +105,11 @@ void funcMotor(int ledV, void(*pFuncionPot)(),float dist)
   {
     if(flag == 0)
     {
-      pFuncionPot();
-      delay(5000);
+      for(miliseg=0;miliseg<5000;miliseg++)
+      {
+        pFuncionPot();
+        delay(1);
+      }
       analogWrite(MOTOR,0);
       delay(100);
       flag = 1;
